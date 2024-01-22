@@ -28,6 +28,4 @@ private final UserRepository repository;
     public List<User> findConnectedUsers(){
         return repository.findAllByStatus(Status.ONLINE);
     }
-
-
 }
