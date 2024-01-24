@@ -2,8 +2,7 @@ package com.springchat.chat_app.chat;
 
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
