@@ -41,7 +41,63 @@ Since websocket is just a communication protocol, it doesn't know how to send a 
   ![image](https://github.com/sandesh300/Real-Time-Chat-App/assets/92014891/a3368aad-fb65-4684-a167-79b54e7025ed)
   ![image](https://github.com/sandesh300/Real-Time-Chat-App/assets/92014891/dbbdbbd5-5a83-4af7-8fe4-7b1204a4e5c7)
 
+## WebSocket Config
+@Configuration
+@EnableWebSocketMessageBroker
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry registry) {
+        registry.enableSimpleBroker("/user");
+        registry.setApplicationDestinationPrefixes("/app");
+        registry.setUserDestinationPrefix("/user");
+    }
 
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/ws")
+                .withSockJS();
+    }
+
+    @Override
+    public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
+        DefaultContentTypeResolver resolver = new DefaultContentTypeResolver();
+        resolver.setDefaultMimeType(MimeTypeUtils.APPLICATION_JSON);
+        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+        converter.setObjectMapper(new ObjectMapper());
+        converter.setContentTypeResolver(resolver);
+        messageConverters.add(converter);
+        return false;
+    }
+}
+
+### docker-compose.yml
+
+```yaml
+services:
+  mongodb:
+    image: mongo
+    container_name: mongo_db
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo:/data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=sandy
+      - MONGO_INITDB_ROOT_PASSWORD=sandy
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo_express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=sandy
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=sandy
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+
+volumes:
+  mongo: {}
 
 
